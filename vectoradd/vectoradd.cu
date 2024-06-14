@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cmath>
 #include <cassert>
 #include <chrono>
