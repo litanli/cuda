@@ -31,7 +31,7 @@ it can search for header files via `-I`.
 
 `nvcc` conveniently follows `gcc` and `g++` command line syntax, so:
 
-*   Compile `nvcc -I./include -o vectoradd vectoradd.cu`
+*   Compile `nvcc -I ../include -o vectoradd vectoradd.cu`
 *   Run `./vectoradd`
 
 Sometimes you can run into a mismatch between the Toolkit's PTX<sup>1</sup> 
@@ -42,7 +42,7 @@ associated with your GPU's architecture:
 
 *   `nvcc -o query query.cpp`
 *   `./query` prints `Compute Capability: X.Y`
-*   Add `-arch` flag to compile commmand: `nvcc -arch=sm_XY -o vectoradd vectoradd.cu`
+*   Add `-arch` flag to compile commmand: `nvcc -arch=sm_XY -I ../include -o vectoradd vectoradd.cu`
     and you should be good to go.
 
 <sup>1</sup>PTX stands for Parallel Thread Execution. Whereas CPUs follow the 
