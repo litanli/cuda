@@ -3,22 +3,9 @@
 #include <cassert>
 #include <chrono>
 #include <cuda_runtime.h>
+#include <helper_cuda.h> 
 
 using namespace std;
-// #include <helper_cuda.h> // from cuda-samples 
-
-#define checkCudaErrors(val) check((val), __FILE__, __LINE__)
-
-void check(cudaError_t err, const char *const file,
-           int const line) {
-
-    // cudaError_t are unsigned integers
-    if (err != cudaSuccess) {
-        fprintf(stderr, "%s at %s:%d\n", 
-                cudaGetErrorName(err), file, line);
-        exit(1);
-    }
-}
 
 // __global__: declares a kernel: callable from host and device, executed on device
 // __device__: declares a device function: callable from device, executed on device
@@ -96,6 +83,7 @@ int main(void) {
     for (int i=0; i < n; i++) {
         assert(c_h[i] == 3.0f);
     }
+    
         
     delete[] a_h;
     delete[] b_h;
