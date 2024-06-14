@@ -1,6 +1,9 @@
 # CUDA Playground
 Work in progress collection of CUDA kernels, meant as a place to practice
-CUDA programming on NVIDIA GPUs. 
+CUDA programming on NVIDIA GPUs. A lot of these kernels will follow those found 
+in [Programming Massively Parallel Processors](https://lnkd.in/gYgRFdGW) except
+that I've added error checking and tried to write cleaner implementations where
+possible.
 
 ## Requirements
 *   NVDIA GPU, see https://developer.nvidia.com/cuda-gpus for supported devices.
@@ -56,3 +59,6 @@ the ISA that NIVIDA GPUs follow and the "Assembly code" for it.
 
 ## Contents at a Glance
 *   vectoradd - sum two vectors 
+
+
+
