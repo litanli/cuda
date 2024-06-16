@@ -3,7 +3,17 @@ Work in progress collection of CUDA kernels, meant as a place to practice
 CUDA programming on NVIDIA GPUs. A lot of these kernels will follow those found 
 in [Programming Massively Parallel Processors](https://lnkd.in/gYgRFdGW) except
 that I've added error checking and tried to write cleaner implementations where
-possible.
+possible. For more kernel examples, NVIDIA's [cuda-samples](https://github.com/NVIDIA/cuda-samples)
+repo contains a large collection of code.
+
+CUDA kernel implementations are low level so they require some
+basic knowledge of GPU architecture for implementation and performance 
+profiling, especially of the GPU's memory hierarchy. GPU hardware architecture 
+and the CUDA API evolve over time, however fundamental concepts should remain 
+fairly static and are worth learning. Some of these include memory hierarchy, 
+level-caching, logical organization (grids, blocks, warps, threads) and 
+physical organization (CUDA cores, Tensor cores, SMs). All of this can be found 
+in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/).
 
 ## Requirements
 *   NVDIA GPU, see https://developer.nvidia.com/cuda-gpus for supported devices.
