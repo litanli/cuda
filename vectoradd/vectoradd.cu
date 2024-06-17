@@ -73,11 +73,7 @@ int main(void) {
 
     // Whether vector_add computes on host or device is abstracted away
     // from the perspective of the host caller.
-    // auto tic = chrono::high_resolution_clock::now();
     time_exec(vector_add, a_h, b_h, c_h, n);
-    // auto toc = chrono::high_resolution_clock::now();
-    // auto duration = chrono::duration_cast<chrono::milliseconds>(toc - tic);
-    // cout << "vector_add took " << duration.count() << " ms" << endl;
 
     // Verify results
     for (int i=0; i < n; i++) {
