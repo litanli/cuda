@@ -39,5 +39,3 @@ time_exec(Func func, Args&&... args) {
     std::cout << "Execution took " << duration.count() << " ms" << std::endl;
     return result;
 }
-
-
