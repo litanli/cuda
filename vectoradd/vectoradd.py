@@ -14,85 +14,49 @@ def timing(f):
         return ret
     return wrap
 
-# @timing
+@timing
 def vec_add(a, b):
-    c = [0] * len(a)
-    for i in range(len(a)):
-        c[i] = a[i] + b[i]
-    return c
-
-# @timing
-def vec_add_np(a, b):
     return a + b
 
-# @timing 
-def vec_add_torch(a, b):
-    return a + b
-
-def memory_stats():
-    print(to.cuda.memory_allocated()/1024**2)
-    print(to.cuda.memory_reserved()/1024**2)  # cached memory
-
+def clear_gpu_cache():
+    to.cuda.empty_cache()
+    assert to.cuda.memory_allocated() == 0
+    assert to.cuda.memory_reserved() == 0  # cached memory
+    
 @timing
 def main():
 
-    runtimes_for = []
-    runtimes_np = []
-    runtimes_to_cpu = []
-    runtimes_to_cuda = []
+    # Test numpy and torch implementations of vector add,
+    # clearning GPU cache in-between runs
+    for n in range(200_000_000, 1_000_000_001, 200_000_000):
 
-    for n in range(100_000_000, 1_000_000_001, 100_000_000):
+        print(f'--- n={n:,} ---')
 
-        print(f'n={n}')
-        
-        # if n < 300_000_001:
-        #     a = [1.0] * n
-        #     b = [2.0] * n
-        #     tic = perf_counter()
-        #     vec_add(a, b)  # n=200e6 5.55s (single core)
-        #     runtimes_for.append(perf_counter() - tic)
-
-        #     del a, b
-        #     gc.collect()
-
-        a = np.ones(n)
-        b = np.ones(n) * 2
-        tic = perf_counter()
-        vec_add_np(a, b)  # n=200e6 0.27s (single core)
-        runtimes_np.append(perf_counter() - tic)
-        
+        # numpy
+        print("--- numpy cpu single-process")
+        a, b = np.ones(n), np.ones(n)
+        vec_add(a, b)
         del a, b
         gc.collect()
 
-        a = to.ones(n)
-        b = to.ones(n) * 2
+        # torch cpu
+        print("--- torch cpu multiprocessing")
+        a, b = to.ones(n), to.ones(n)
         print(a.device, b.device) 
-        tic = perf_counter()
-        vec_add_torch(a, b)  # to.Tensor natively uses multiprocessing!
-        runtimes_to_cpu.append(perf_counter() - tic)
-
+        vec_add(a, b)  # to.Tensor CPU natively uses multiprocessing!
         del a, b
         gc.collect()
-        to.cuda.empty_cache()
-        memory_stats()
+        clear_gpu_cache()
 
-
-        a = to.ones(n).cuda()
-        b = (to.ones(n) * 2).cuda()
+        # torch CUDA
+        print("--- torch CUDA")
+        a, b = to.ones(n).cuda(), to.ones(n).cuda()
         print(a.device, b.device)
-        tic = perf_counter()
-        vec_add_torch(a, b)
-        runtimes_to_cuda.append(perf_counter() - tic)
-
+        vec_add(a, b)
         del a, b
         gc.collect()
-        to.cuda.empty_cache()
-        memory_stats()
+        clear_gpu_cache()
 
-    print(runtimes_for)
-    print(runtimes_np)
-    print(runtimes_to_cpu)
-    print(runtimes_to_cuda)
 
 if __name__ == '__main__':
     main()
