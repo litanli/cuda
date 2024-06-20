@@ -20,17 +20,18 @@ def vec_add(a, b):
 
 def clear_gpu_cache():
     to.cuda.empty_cache()
-    assert to.cuda.memory_allocated() == 0
-    assert to.cuda.memory_reserved() == 0  # cached memory
     
-@timing
+    # to.cuda.memory_reserved() returns current cached memory in bytes
+    assert to.cuda.memory_reserved() == 0, to.cuda.memory_reserved()  
+   
 def main():
 
     # Test numpy and torch implementations of vector add,
     # clearning GPU cache in-between runs
+
     for n in range(200_000_000, 1_000_000_001, 200_000_000):
 
-        print(f'--- n={n:,} ---')
+        print(f'\n n={n:,}')
 
         # numpy
         print("--- numpy cpu single-process")

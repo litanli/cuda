@@ -57,7 +57,7 @@ void grayscale(uint8_t* in_h, uint8_t* out_h, int h, int w, int channels) {
     // Check for kernel launch errors
     checkCudaErrors(cudaGetLastError());
 
-    // Copy results back to host
+    // Copy results back to host sychronously
     checkCudaErrors(cudaMemcpy(out_h, out_d, h * w, cudaMemcpyDefault));
 
     cudaFree(in_d);

@@ -5,6 +5,7 @@
 #include <utility>
 
 // Error checking macro
+// See https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#error-handling
 #define checkCudaErrors(val) check((val), __FILE__, __LINE__)
 
 void check(cudaError_t err, const char *const file,
@@ -18,13 +19,31 @@ void check(cudaError_t err, const char *const file,
     }
 }
 
-// Prints the execution time of a function, similar to a Python timing wrapper
+// Prints the execution time of a function, similar to a Python timing wrapper.
+// See https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#using-cpu-timers
 template <typename Func, typename... Args>
 typename std::enable_if<std::is_void<decltype(std::declval<Func>()(std::declval<Args>()...))>::value, void>::type
 time_exec(Func func, Args&&... args) {
+
+    /*  The timed function may be asychronous, returning control immediately
+        back to the calling CPU thread. To ensure proper timing:
+        1) Call cudaDeviceSynchronize() to block CPU thread until GPU completes 
+           any preceding tasks
+        2) Record start time
+        3) Call the timed function (which may be asynchronous)
+        4) cudaDeviceSynchronize() again to block CPU thread until GPU completes
+           the timed function
+        5) Record end time
+    */
+
+    checkCudaErrors(cudaDeviceSynchronize());
     auto tic = std::chrono::high_resolution_clock::now();
+
     func(std::forward<Args>(args)...);
+
+    checkCudaErrors(cudaDeviceSynchronize());
     auto toc = std::chrono::high_resolution_clock::now();
+
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic);
     std::cout << "Execution took " << duration.count() << " ms" << std::endl;
 }

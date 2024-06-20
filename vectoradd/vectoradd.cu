@@ -25,6 +25,7 @@ void vector_add_kernel(float *a, float *b, float *c, int n) {
 }
 
 // Vector add stub (a stub is a function that calls a kernel)
+// Note this stub is synchronous because the last cudaMemcpy is blocking.
 void vector_add(float *a_h, float *b_h, float *c_h, int n) {
     
     size_t size = n * sizeof(float);
@@ -80,7 +81,6 @@ int main(void) {
         assert(c_h[i] == 3.0f);
     }
     
-        
     delete[] a_h;
     delete[] b_h;
     delete[] c_h;
