@@ -1,6 +1,5 @@
 #include <cmath>
 #include <cassert>
-#include <chrono>
 #include <cuda_runtime.h>
 #include <helper_cuda.h> 
 
