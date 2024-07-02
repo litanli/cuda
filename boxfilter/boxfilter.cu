@@ -23,12 +23,21 @@ void box_filter(uint8_t* in, uint8_t* out, int h, int w, int channels,
     
     int out_row = blockIdx.y * blockDim.y + threadIdx.y;
     int out_col = blockIdx.x * blockDim.x + threadIdx.x;
-
     if (out_row < h && out_col < w) {
-
         int pixel_val = 0;
         int pixel_count = 0;
 
+        for (int blur_row=-filter_size/2; blur_row<=filter_size/2; blur_row++) {
+            for (int blur_col=-filter_size/2; blur_col<=filter_size/2; blur_col++) {
+                int in_row = out_row + blur_row;
+                int in_col = out_col + blur_col;
+                if (in_row >= 0 && in_row < h && in_col >= 0 && in_col < w) {
+                    pixel_val += in[in_row*w + in_col];
+                    pixel_count++;
+                }
+            }
+        }
+        out[out_row*w + out_col] = (uint8_t)(pixel_val / pixel_count);
     }
 }
 
