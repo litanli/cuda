@@ -69,7 +69,7 @@ int main(void) {
 
     // stbi_load returns image as 1D array in row major order, where each pixel 
     // is represented by 4 contiguous elements r, g, b, and alpha (channels=4).
-    const char* filename = "tree.png";
+    const char* filename = "../resources/tree.png";
     int h = 0, w = 0, channels = 0;
     uint8_t* image_h = stbi_load(filename, &w, &h, &channels, 0);
     if (!image_h) {
