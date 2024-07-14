@@ -70,6 +70,6 @@ the ISA that NIVIDA GPUs follow and the "Assembly code" for it.
 ## Contents at a Glance
 *   vectoradd - sum two vectors 
 *   grayscale - converts rgba png into grayscale/luminance values
-
+*   boxfilter - applies uniform blur to rgb channels
 
 
