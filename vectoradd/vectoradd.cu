@@ -1,4 +1,3 @@
-#include <cmath>
 #include <cassert>
 #include <cuda_runtime.h>
 #include <helper_cuda.h> 
@@ -42,7 +41,8 @@ void vector_add(float *a_h, float *b_h, float *c_h, int n) {
     // Kernel launch (asynchronous) - config params <<<num blocks, num threads 
     // per block>>>. Max 1024 threads per block, threads per block should be 
     // multiple of 32 so every scheduled warps have 32 threads running. 
-    vector_add_kernel<<<(int)ceil(n / 1024), 1024>>>(a_d, b_d, c_d, n);
+    int block_size = 1024;
+    vector_add_kernel<<<(n + block_size - 1)/block_size, block_size>>>(a_d, b_d, c_d, n);
 
     // check for kernel launch errors
     checkCudaErrors(cudaGetLastError());  

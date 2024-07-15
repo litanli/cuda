@@ -1,4 +1,3 @@
-#include <cmath>
 #include <cassert>
 #include <cstdint>
 #include <cuda_runtime.h>
@@ -50,7 +49,7 @@ void grayscale(uint8_t* in_h, uint8_t* out_h, int h, int w, int channels) {
     // Copy input data to device global memory
     checkCudaErrors(cudaMemcpy(in_d, in_h, h * w * channels, cudaMemcpyDefault));
 
-    dim3 grid_dim(ceil(w / 32), ceil(h / 32));
+    dim3 grid_dim((w + 31)/32, (h + 31)/32);
     dim3 block_dim(32, 32);
     grayscale_kernel<<<grid_dim, block_dim>>>(in_d, out_d, h, w, channels);
 
