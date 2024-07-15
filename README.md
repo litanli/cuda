@@ -71,3 +71,4 @@ the ISA that NIVIDA GPUs follow and the "Assembly code" for it.
 *   vectoradd - sum two vectors 
 *   grayscale - converts rgba png into grayscale/luminance values
 *   boxfilter - applies uniform blurring to rgb channels of a png
+*   matmul    - basic matrix multiply between two matricies (no alpha, no beta)
