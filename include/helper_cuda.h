@@ -31,21 +31,26 @@ time_exec(Func func, Args&&... args) {
            any preceding tasks
         2) Record start time
         3) Call the timed function (which may be asynchronous)
-        4) cudaDeviceSynchronize() again to block CPU thread until GPU completes
+        4) Synch again to block CPU thread until GPU completes
            the timed function
         5) Record end time
     */
 
     checkCudaErrors(cudaDeviceSynchronize());
-    auto tic = std::chrono::high_resolution_clock::now();
+
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);  // place start event into default stream 0
 
     func(std::forward<Args>(args)...);
 
-    checkCudaErrors(cudaDeviceSynchronize());
-    auto toc = std::chrono::high_resolution_clock::now();
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);  // block host-side until stop event completes
 
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic);
-    std::cout << "Execution took " << duration.count() << " ms" << std::endl;
+    float milliseconds = 0;
+    cudaEventElapsedTime(&milliseconds, start, stop);
+    std::cout << "Execution took " << milliseconds << " ms" << std::endl;
 }
 
 template <typename Func, typename... Args>

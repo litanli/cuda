@@ -1,6 +1,4 @@
-#include <cmath>
 #include <cassert>
-// #include <cstdint>
 #include <cuda_runtime.h>
 #include <helper_cuda.h>
 
