@@ -15,6 +15,15 @@ level-caching, logical organization (grids, blocks, warps, threads) and
 physical organization (CUDA cores, Tensor cores, SMs). All of this can be found 
 in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/).
 
+## Contents at a Glance
+*   vectoradd - sum two vectors 
+*   grayscale - converts rgba png into grayscale/luminance values
+*   boxfilter - applies uniform blurring to rgb channels of a png
+*   matmul    - basic matrix multiply between two matricies (no alpha, no beta)
+    - naive
+    - tiled, uses shared memory for improved FLOPs per bytes loaded from global 
+      memory
+
 ## Requirements
 *   NVDIA GPU, see https://developer.nvidia.com/cuda-gpus for supported devices.
 *   `nvcc` is the standard CUDA compiler provided by NVIDIA. It comes with
@@ -66,9 +75,3 @@ machine code (1's and 0's). For host/CPU C++ code, nvcc generates Assembly code
 just like g++ and clang++. For device/GPU CUDA code, it generates PTX code 
 which invokes machine code implementing the PTX ISA. Thus PTX refers to both 
 the ISA that NIVIDA GPUs follow and the "Assembly code" for it.
-
-## Contents at a Glance
-*   vectoradd - sum two vectors 
-*   grayscale - converts rgba png into grayscale/luminance values
-*   boxfilter - applies uniform blurring to rgb channels of a png
-*   matmul    - basic matrix multiply between two matricies (no alpha, no beta)

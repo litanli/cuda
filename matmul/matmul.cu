@@ -8,7 +8,7 @@ using namespace std;
 // Naive matmul kernel. Threads should cooperate to load row of A into shared
 // memory.
 __global__
-void matmul_kernel(float* A, float* B, float* C, int N) {
+void naive_matmul(float* A, float* B, float* C, int N) {
     
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -21,6 +21,44 @@ void matmul_kernel(float* A, float* B, float* C, int N) {
         }
         C[row * N + col] = dot_prod;
     }
+}
+
+// Threads within same block cooperate to load tiles of A and tiles of B into 
+// shared memory. Increases FLOPs/byte ratio.
+#define TILE_WIDTH 32
+__global__
+void tiled_matmul(float* A, float* B, float* C, int N) {
+
+    // Block scope, Grid lifetime
+    __shared__ float A_tile[TILE_WIDTH][TILE_WIDTH];
+    __shared__ float B_tile[TILE_WIDTH][TILE_WIDTH];
+    
+    // Element of C that this thread is responsible for
+    int row = blockIdx.y * TILE_WIDTH + threadIdx.y;
+    int col = blockIdx.x * TILE_WIDTH + threadIdx.x;
+
+    float val = 0.0f;
+    for (int phase = 0; phase < N / TILE_WIDTH; phase++) {
+        
+        // Threads of block cooperatively load A and B tile into shared memory
+        A_tile[threadIdx.y][threadIdx.x] = A[row * N + phase * TILE_WIDTH + threadIdx.x];
+        B_tile[threadIdx.y][threadIdx.x] = B[(phase * TILE_WIDTH + threadIdx.y) * N + col];
+        // Barrier to ensure all threads of block have loaded their portions 
+        // of the tile
+        __syncthreads();  
+
+        // Compute dot product for current phase using values cooperatively 
+        // loaded into shared memory
+        for (int i = 0; i < TILE_WIDTH; i++) {
+            val += A_tile[threadIdx.y][i] * B_tile[i][threadIdx.x];
+        }
+        // Ensure all threads of block have finished using current A and B tile
+        // before loading up the next two tiles.
+        __syncthreads();
+    }
+    
+    // One element computed
+    C[row * N + col] = val;
 }
 
 // Stub
@@ -36,10 +74,13 @@ void matmul(float* A_h, float* B_h, float* C_h, int N) {
     checkCudaErrors(cudaMemcpy(A_d, A_h, N * N * sizeof(float), cudaMemcpyDefault));
     checkCudaErrors(cudaMemcpy(B_d, B_h, N * N * sizeof(float), cudaMemcpyDefault));
 
-    dim3 grid_dim((N + 31) / 32, (N + 31) / 32);
-    dim3 block_dim(32, 32);
- 
-    matmul_kernel<<<grid_dim, block_dim>>>(A_d, B_d, C_d, N);
+    // dim3 grid_dim((N + 31) / 32, (N + 31) / 32);
+    // dim3 block_dim(32, 32);
+    // matmul_kernel<<<grid_dim, block_dim>>>(A_d, B_d, C_d, N);
+
+    dim3 grid_dim((N + TILE_WIDTH - 1) / TILE_WIDTH, (N + TILE_WIDTH - 1) / TILE_WIDTH);
+    dim3 block_dim(TILE_WIDTH, TILE_WIDTH);
+    tiled_matmul<<<grid_dim, block_dim>>>(A_d, B_d, C_d, N);
 
     // Check for kernel launch errors
     checkCudaErrors(cudaGetLastError());
@@ -55,24 +96,26 @@ void matmul(float* A_h, float* B_h, float* C_h, int N) {
 
 
 int main(void) {
-    int N = 3;
+    int N = 64;
 
     float A_h[N * N];
     float B_h[N * N];
     float C_h[N * N];
-
     math::identity(A_h, N);    
     math::ones(B_h, N);
-
     matmul(A_h, B_h, C_h, N);
     // time_exec(matmul, A_h, B_h, C_h, N);
-
     // Verify
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             assert(C_h[i * N + j] == 1);
         }
     }
+
+
+    
+
+    
 
     return 0;
 }
