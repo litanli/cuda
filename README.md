@@ -19,10 +19,10 @@ in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programm
 *   vectoradd - sum two vectors 
 *   grayscale - converts rgba png into grayscale/luminance values
 *   boxfilter - applies uniform blurring to rgb channels of a png
-*   matmul    - basic matrix multiply between two matricies (no alpha, no beta)
-    - naive
-    - tiled, uses shared memory for improved FLOPs per bytes loaded from global 
-      memory
+*   matmul    - matrix multiply (no alpha, no beta)
+    - naive implementation
+    - tiled implementation uses shared memory for increased num FLOPs per byte 
+      loaded from global memory
 
 ## Requirements
 *   NVDIA GPU, see https://developer.nvidia.com/cuda-gpus for supported devices.
