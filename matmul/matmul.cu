@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cuda_runtime.h>
 #include <helper_cuda.h>
+#include <math.h>
 
 using namespace std;
 
@@ -55,13 +56,13 @@ void matmul(float* A_h, float* B_h, float* C_h, int N) {
 
 int main(void) {
     int N = 3;
-    float A_h[] = {1, 0, 0, 
-                   0, 1, 0,
-                   0, 0, 1};
-    float B_h[] = {1, 1, 1,
-                   1, 1, 1,
-                   1, 1, 1};
+
+    float A_h[N * N];
+    float B_h[N * N];
     float C_h[N * N];
+
+    math::identity(A_h, N);    
+    math::ones(B_h, N);
 
     matmul(A_h, B_h, C_h, N);
     // time_exec(matmul, A_h, B_h, C_h, N);
@@ -69,7 +70,7 @@ int main(void) {
     // Verify
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            assert(C_h[i * N + j] == 1.0f);
+            assert(C_h[i * N + j] == 1);
         }
     }
 
