@@ -5,8 +5,7 @@
 
 using namespace std;
 
-// Naive matmul kernel. Threads should cooperate to load row of A into shared
-// memory.
+// Naive matmul kernel. 2 / 8 = 0.25 FLOPs/B.
 __global__
 void naive_matmul(float* A, float* B, float* C, int N) {
     
@@ -24,7 +23,7 @@ void naive_matmul(float* A, float* B, float* C, int N) {
 }
 
 // Threads within same block cooperate to load tiles of A and tiles of B into 
-// shared memory. Increases FLOPs/byte ratio.
+// shared memory. 0.25 / (1/TILE_WIDTH) = 0.25 * TILE_WIDTH FLOPs/B.
 #define TILE_WIDTH 32
 __global__
 void tiled_matmul(float* A, float* B, float* C, int N) {
@@ -44,7 +43,7 @@ void tiled_matmul(float* A, float* B, float* C, int N) {
         A_tile[threadIdx.y][threadIdx.x] = A[row * N + phase * TILE_WIDTH + threadIdx.x];
         B_tile[threadIdx.y][threadIdx.x] = B[(phase * TILE_WIDTH + threadIdx.y) * N + col];
         // Barrier to ensure all threads of block have loaded their portions 
-        // of the tile
+        // of the tile. Read-after-write.
         __syncthreads();  
 
         // Compute dot product for current phase using values cooperatively 
@@ -53,7 +52,7 @@ void tiled_matmul(float* A, float* B, float* C, int N) {
             val += A_tile[threadIdx.y][i] * B_tile[i][threadIdx.x];
         }
         // Ensure all threads of block have finished using current A and B tile
-        // before loading up the next two tiles.
+        // before loading up the next two tiles. Write-after-read.
         __syncthreads();
     }
     

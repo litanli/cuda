@@ -20,9 +20,10 @@ in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programm
 *   grayscale - converts rgba png into grayscale/luminance values
 *   boxfilter - applies uniform blurring to rgb channels of a png
 *   matmul    - matrix multiply (no alpha, no beta)
-    - naive implementation
-    - tiled implementation uses shared memory for increased num FLOPs per byte 
-      loaded from global memory
+    - naive implementation 0.25 FLOPs/B
+    - tiled implementation threads cooperatively load tiles into shared memory
+      and thread synchronization, increase FLOP/B by factor of TILE_WIDTH over
+      naive.
 
 ## Requirements
 *   NVDIA GPU, see https://developer.nvidia.com/cuda-gpus for supported devices.
