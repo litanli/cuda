@@ -38,7 +38,7 @@ void tiled_matmul(float* A, float* B, float* C, int I, int J, int K) {
     int col = blockIdx.x * TILE_WIDTH + threadIdx.x;
 
     float val = 0.0f;
-    for (int phase = 0; phase < J / TILE_WIDTH; phase++) {
+    for (int phase = 0; phase < (J + TILE_WIDTH - 1) / TILE_WIDTH; phase++) {
         
         // Threads of block cooperatively load A and B tile into shared memory
         int A_col = phase * TILE_WIDTH + threadIdx.x;
