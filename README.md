@@ -22,7 +22,7 @@ in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programm
 *   matmul    - matrix multiply (no alpha, no beta)
     - naive implementation 0.25 FLOPs/B
     - tiled implementation threads cooperatively load tiles into shared memory
-      and thread synchronization, increase FLOP/B by factor of TILE_WIDTH over
+      then synchronize. Increase FLOP/B by factor of TILE_WIDTH over
       naive.
 
 ## Requirements

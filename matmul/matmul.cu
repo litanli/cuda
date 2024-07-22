@@ -40,8 +40,18 @@ void tiled_matmul(float* A, float* B, float* C, int N) {
     for (int phase = 0; phase < N / TILE_WIDTH; phase++) {
         
         // Threads of block cooperatively load A and B tile into shared memory
-        A_tile[threadIdx.y][threadIdx.x] = A[row * N + phase * TILE_WIDTH + threadIdx.x];
-        B_tile[threadIdx.y][threadIdx.x] = B[(phase * TILE_WIDTH + threadIdx.y) * N + col];
+        if (row < N && phase * TILE_WIDTH + threadIdx.x < N) {
+            A_tile[threadIdx.y][threadIdx.x] = A[row * N + phase * TILE_WIDTH + threadIdx.x];
+        } else {
+            // 0.0f won't affect dot product
+            A_tile[threadIdx.y][threadIdx.x] = 0.0f;  
+        }
+        if ((phase * TILE_WIDTH + threadIdx.y) < N && col < N) {
+            B_tile[threadIdx.y][threadIdx.x] = B[(phase * TILE_WIDTH + threadIdx.y) * N + col];
+        } else {
+            B_tile[threadIdx.y][threadIdx.x] = 0.0f;
+        }
+        
         // Barrier to ensure all threads of block have loaded their portions 
         // of the tile. Read-after-write.
         __syncthreads();  
@@ -57,7 +67,9 @@ void tiled_matmul(float* A, float* B, float* C, int N) {
     }
     
     // One element computed
-    C[row * N + col] = val;
+    if (row < N && col < N) {
+        C[row * N + col] = val;
+    }
 }
 
 // Stub
