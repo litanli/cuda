@@ -60,10 +60,9 @@ it can search for header files via `-I`.
 Sometimes you can run into a mismatch between the Toolkit's PTX<sup>1</sup> 
 version and your GPU's architecture generation. This causes kernel launches to 
 fail (silently, unless we error check) with `cudaErrorUnsupportedPtxVersion`. 
-If this is the case, compile and run `query.cpp`, which prints a number 
-associated with your GPU's architecture:
+If this is the case, compile and run `query.cu`:
 
-*   `nvcc -o query query.cpp`
+*   `nvcc -o query query.cu`
 *   `./query` prints `Compute Capability: X.Y`
 *   Add `-arch` flag to compile commmand: `nvcc -arch=sm_XY -I ../include -o vectoradd vectoradd.cu`
     and you should be good to go.
