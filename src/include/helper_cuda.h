@@ -19,7 +19,7 @@ void check(cudaError_t err, const char *const file,
     }
 }
 
-// Prints the execution time of a function, similar to a Python timing wrapper.
+// Prints the execution time of a function that returns void, similar to a Python timing wrapper.
 // See https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#using-cpu-timers
 template <typename Func, typename... Args>
 typename std::enable_if<std::is_void<decltype(std::declval<Func>()(std::declval<Args>()...))>::value, void>::type
@@ -53,6 +53,8 @@ time_exec(Func func, Args&&... args) {
     std::cout << "Execution took " << milliseconds << " ms" << std::endl;
 }
 
+// Measures the execution time of a function and returns the result of the
+// function call
 template <typename Func, typename... Args>
 typename std::enable_if<!std::is_void<decltype(std::declval<Func>()(std::declval<Args>()...))>::value, decltype(std::declval<Func>()(std::declval<Args>()...))>::type
 time_exec(Func func, Args&&... args) {
