@@ -66,8 +66,8 @@ If this is the case, compile and run `query.cu`:
 <sup>1</sup>PTX stands for Parallel Thread Execution. Whereas CPUs follow the 
 x86 or ARM instruction set, NVIDIA GPUs follow the PTX ISA. An instruction set
 architecture (ISA) is neither software nor hardware - it's a specification
-of low-level instructions that a device should support, which is implemented in 
-machine code (1's and 0's). For host/CPU C++ code, nvcc generates Assembly code
-just like g++ and clang++. For device/GPU CUDA code, it generates PTX code 
-which invokes machine code implementing the PTX ISA. Thus PTX refers to both 
-the ISA that NIVIDA GPUs follow and the "Assembly code" for it.
+of low-level instructions that a device should support. For host/CPU C++ code, 
+nvcc generates Assembly code just like g++ and clang++. For device/GPU CUDA 
+code, it generates PTX code which invokes machine code implementing the PTX 
+ISA. Thus PTX refers to both the ISA that NIVIDA GPUs follow and the "Assembly 
+code" for it.
