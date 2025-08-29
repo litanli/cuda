@@ -8,7 +8,7 @@ repo contains a large collection of code.
 
 CUDA kernel implementations are low level so they require some
 basic knowledge of GPU architecture for implementation and performance 
-profiling, especially of the GPU's memory hierarchy. GPU hardware architecture 
+profiling, especially of the GPU's [memory hierarchy](https://litanli.github.io/blog/gpu-architecture.html). GPU hardware architecture 
 and the CUDA API evolve over time, however fundamental concepts should remain 
 fairly static and are worth learning. Some of these include memory hierarchy, 
 level-caching, logical organization (grids, blocks, warps, threads) and 
