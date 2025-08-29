@@ -15,7 +15,7 @@ level-caching, logical organization (grids, blocks, warps, threads) and
 physical organization (CUDA cores, Tensor cores, SMs). All of this can be found 
 in the [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/).
 
-## Contents at a Glance
+## Content at a Glance
 *   vectoradd - sum two vectors 
 *   grayscale - converts rgba png into grayscale/luminance values
 *   boxfilter - applies uniform blurring to rgb channels of a png
